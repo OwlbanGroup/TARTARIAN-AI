@@ -5,16 +5,8 @@ AI for design and repair optimization in Tartarian Advanced Architecture.
 
 import os
 import numpy as np
-
-try:
-    from sklearn.tree import DecisionTreeRegressor
-except ImportError:
-    DecisionTreeRegressor = None
-
-try:
-    from openai import OpenAI
-except ImportError:
-    OpenAI = None
+from sklearn.tree import DecisionTreeRegressor  # type: ignore # pylint: disable=import-error
+from openai import OpenAI  # type: ignore # pylint: disable=import-error
 
 
 class AAAIController:
@@ -23,9 +15,10 @@ class AAAIController:
     """
 
     def __init__(self):
-        self.model = DecisionTreeRegressor() if DecisionTreeRegressor else None
+        self.model = DecisionTreeRegressor()
         self.data = []
-        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
+        api_key = os.getenv('OPENAI_API_KEY')
+        self.openai_client = OpenAI(api_key=api_key) if api_key else None
 
     def optimize_design(self, stress, material_strength):
         """
@@ -39,10 +32,10 @@ class AAAIController:
             float: Optimization factor.
         """
         self.data.append(([stress, material_strength], stress / material_strength))
-        if len(self.data) > 10 and self.model:
-            X = np.array([d[0] for d in self.data])
+        if len(self.data) > 10:
+            x = np.array([d[0] for d in self.data])
             y = np.array([d[1] for d in self.data])
-            self.model.fit(X, y)
+            self.model.fit(x, y)
             return self.model.predict([[stress, material_strength]])[0]
         return 0.5
 
@@ -67,7 +60,7 @@ class AAAIController:
                     max_tokens=100
                 )
                 return response.choices[0].message.content.strip()
-            except Exception:
+            except Exception as e:
                 return "Divine guidance: Build with divine harmony."
         return "Divine guidance: Build with divine harmony."
 

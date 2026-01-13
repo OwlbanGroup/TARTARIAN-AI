@@ -5,7 +5,11 @@ AI for load balancing in the Tartarian Wireless Electricity Network.
 
 import os
 import numpy as np
-from sklearn.linear_model import LogisticRegression  # For decision making
+
+try:
+    from sklearn.linear_model import LogisticRegression  # For decision making
+except ImportError:
+    LogisticRegression = None
 
 try:
     from openai import OpenAI
@@ -19,7 +23,7 @@ class WENAIController:
     """
 
     def __init__(self):
-        self.model = LogisticRegression()
+        self.model = LogisticRegression() if LogisticRegression else None
         self.data = []
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
@@ -35,7 +39,7 @@ class WENAIController:
         """
         priorities = [1 if d > 100 else 0 for d in demands]  # High demand priority
         self.data.append((demands, priorities))
-        if len(self.data) > 5:
+        if len(self.data) > 5 and self.model:
             X = np.array([d[0] for d in self.data])
             y = np.array([d[1] for d in self.data])
             self.model.fit(X, y)

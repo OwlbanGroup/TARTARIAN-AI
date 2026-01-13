@@ -5,7 +5,11 @@ AI for diagnostics and treatment personalization in the Tartarian Healing Chambe
 
 import os
 import numpy as np
-from sklearn.naive_bayes import GaussianNB  # For classification
+
+try:
+    from sklearn.naive_bayes import GaussianNB  # For classification
+except ImportError:
+    GaussianNB = None
 
 try:
     from openai import OpenAI
@@ -19,7 +23,7 @@ class HCAIController:
     """
 
     def __init__(self):
-        self.model = GaussianNB()
+        self.model = GaussianNB() if GaussianNB else None
         self.data = []
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
@@ -34,7 +38,7 @@ class HCAIController:
             int: Diagnosis class.
         """
         self.data.append((symptoms, np.random.randint(0, 3)))  # Simulated labels
-        if len(self.data) > 10:
+        if len(self.data) > 10 and self.model:
             X = np.array([d[0] for d in self.data])
             y = np.array([d[1] for d in self.data])
             self.model.fit(X, y)

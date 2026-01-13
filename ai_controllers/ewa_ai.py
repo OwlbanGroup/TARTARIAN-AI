@@ -5,7 +5,11 @@ AI for knowledge retrieval in the Tartarian Eternal Wisdom Archive.
 
 import os
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
+
+try:
+    from sklearn.neighbors import NearestNeighbors
+except ImportError:
+    NearestNeighbors = None
 
 try:
     from openai import OpenAI
@@ -19,7 +23,7 @@ class EWAAIController:
     """
 
     def __init__(self):
-        self.model = NearestNeighbors(n_neighbors=1)
+        self.model = NearestNeighbors(n_neighbors=1) if NearestNeighbors else None
         self.data = []
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
@@ -34,7 +38,7 @@ class EWAAIController:
             int: Index of closest knowledge.
         """
         self.data.append(query_vector)
-        if len(self.data) > 5:
+        if len(self.data) > 5 and self.model:
             X = np.array(self.data)
             self.model.fit(X)
             distances, indices = self.model.kneighbors([query_vector])

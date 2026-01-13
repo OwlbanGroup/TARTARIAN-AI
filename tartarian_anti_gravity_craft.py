@@ -56,9 +56,9 @@ class AntiGravityCraft:
     def _ai_stability_adjust(self, altitude_error):
         if len(self.train_data) < 5:
             return np.array([0.0, 0.0, 0.0])
-        X = np.array([d[0] for d in self.train_data]).reshape(-1, 1)
+        x = np.array([d[0] for d in self.train_data]).reshape(-1, 1)
         y = np.array([d[1] for d in self.train_data])
-        self.ai_model.fit(X, y)
+        self.ai_model.fit(x, y)
         adjust = self.ai_model.predict([[altitude_error]])[0]
         return np.array([0, 0, adjust])
 
