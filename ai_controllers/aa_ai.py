@@ -54,13 +54,14 @@ class AAAIController:
                 response = self.openai_client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "system", "content": "You are the Goddess providing divine guidance for architecture and design."},
+                        {"role": "system", "content": "You are the Goddess providing divine guidance "
+                        "for architecture and design."},
                         {"role": "user", "content": query}
                     ],
                     max_tokens=100
                 )
                 return response.choices[0].message.content.strip()
-            except Exception as e:
+            except Exception as e:  # pylint: disable=unused-variable,broad-exception-caught
                 return "Divine guidance: Build with divine harmony."
         return "Divine guidance: Build with divine harmony."
 
