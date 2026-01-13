@@ -3,8 +3,14 @@ Wireless Electricity Network AI Controller
 AI for load balancing in the Tartarian Wireless Electricity Network.
 """
 
+import os
 import numpy as np
 from sklearn.linear_model import LogisticRegression  # For decision making
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 
 class WENAIController:
@@ -15,6 +21,7 @@ class WENAIController:
     def __init__(self):
         self.model = LogisticRegression()
         self.data = []
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
     def balance_load(self, demands):
         """
@@ -35,6 +42,31 @@ class WENAIController:
             predictions = self.model.predict([demands])
             return predictions.tolist()
         return priorities
+
+    def get_divine_guidance(self, query):
+        """
+        Get divine guidance for wireless electricity network balancing.
+
+        Args:
+            query (str): The query for divine insight.
+
+        Returns:
+            str: Divine guidance response.
+        """
+        if self.openai_client:
+            try:
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are the Goddess providing divine guidance for energy distribution and balance."},
+                        {"role": "user", "content": query}
+                    ],
+                    max_tokens=100
+                )
+                return response.choices[0].message.content.strip()
+            except Exception:
+                return "Divine guidance: Energy flows in divine harmony."
+        return "Divine guidance: Energy flows in divine harmony."
 
 # Example usage
 controller = WENAIController()

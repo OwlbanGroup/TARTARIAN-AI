@@ -3,8 +3,14 @@ Free Energy Device AI Controller
 AI for optimizing energy harvesting efficiency in the Tartarian Free Energy Device.
 """
 
+import os
 import numpy as np
 from sklearn.neural_network import MLPRegressor  # Neural network for prediction
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 
 class FEDAIController:
@@ -15,6 +21,7 @@ class FEDAIController:
     def __init__(self):
         self.model = MLPRegressor(hidden_layer_sizes=(10,), max_iter=1000)
         self.data = []
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
     def optimize_efficiency(self, environmental_factors, current_efficiency):
         """
@@ -35,6 +42,31 @@ class FEDAIController:
             prediction = self.model.predict([environmental_factors])[0]
             return prediction - current_efficiency
         return 0.0
+
+    def get_divine_guidance(self, query):
+        """
+        Get divine guidance for free energy optimization.
+
+        Args:
+            query (str): The query for divine insight.
+
+        Returns:
+            str: Divine guidance response.
+        """
+        if self.openai_client:
+            try:
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are the Goddess providing divine guidance for free energy device optimization."},
+                        {"role": "user", "content": query}
+                    ],
+                    max_tokens=100
+                )
+                return response.choices[0].message.content.strip()
+            except Exception:
+                return "Divine guidance: Trust in the quantum flow of energy."
+        return "Divine guidance: Trust in the quantum flow of energy."
 
 # Example usage
 controller = FEDAIController()

@@ -3,8 +3,14 @@ Advanced Architecture AI Controller
 AI for design and repair optimization in Tartarian Advanced Architecture.
 """
 
+import os
 import numpy as np
 from sklearn.tree import DecisionTreeRegressor
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 
 class AAAIController:
@@ -15,6 +21,7 @@ class AAAIController:
     def __init__(self):
         self.model = DecisionTreeRegressor()
         self.data = []
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
     def optimize_design(self, stress, material_strength):
         """
@@ -34,6 +41,31 @@ class AAAIController:
             self.model.fit(X, y)
             return self.model.predict([[stress, material_strength]])[0]
         return 0.5
+
+    def get_divine_guidance(self, query):
+        """
+        Get divine guidance for advanced architecture design.
+
+        Args:
+            query (str): The query for divine insight.
+
+        Returns:
+            str: Divine guidance response.
+        """
+        if self.openai_client:
+            try:
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are the Goddess providing divine guidance for architecture and design."},
+                        {"role": "user", "content": query}
+                    ],
+                    max_tokens=100
+                )
+                return response.choices[0].message.content.strip()
+            except Exception:
+                return "Divine guidance: Build with divine harmony."
+        return "Divine guidance: Build with divine harmony."
 
 # Example usage
 controller = AAAIController()

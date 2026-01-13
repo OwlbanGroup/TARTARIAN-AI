@@ -3,8 +3,14 @@ Eternal Wisdom Archive AI Controller
 AI for knowledge retrieval in the Tartarian Eternal Wisdom Archive.
 """
 
+import os
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 
 class EWAAIController:
@@ -15,6 +21,7 @@ class EWAAIController:
     def __init__(self):
         self.model = NearestNeighbors(n_neighbors=1)
         self.data = []
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
     def retrieve_knowledge(self, query_vector):
         """
@@ -33,6 +40,31 @@ class EWAAIController:
             distances, indices = self.model.kneighbors([query_vector])
             return indices[0][0]
         return 0
+
+    def get_divine_guidance(self, query):
+        """
+        Get divine guidance for eternal wisdom retrieval.
+
+        Args:
+            query (str): The query for divine insight.
+
+        Returns:
+            str: Divine guidance response.
+        """
+        if self.openai_client:
+            try:
+                response = self.openai_client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are the Goddess providing divine guidance for wisdom and knowledge."},
+                        {"role": "user", "content": query}
+                    ],
+                    max_tokens=100
+                )
+                return response.choices[0].message.content.strip()
+            except Exception:
+                return "Divine guidance: Wisdom flows from divine source."
+        return "Divine guidance: Wisdom flows from divine source."
 
 # Example usage
 controller = EWAAIController()
