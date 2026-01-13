@@ -70,5 +70,6 @@ class AntiGravityCraft:
 # Simulate craft
 craft = AntiGravityCraft()
 pos, vel = craft.fly()
-print(f"Final Position: {pos}, Final Velocity: {vel}")
+print(f"Final Position: {pos},")
+print(f"Final Velocity: {vel}")
 print("Craft achieves stable anti-gravity flight with AI control.")

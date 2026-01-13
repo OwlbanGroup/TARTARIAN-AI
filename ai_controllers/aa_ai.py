@@ -54,8 +54,7 @@ class AAAIController:
                 response = self.openai_client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "system", "content": "You are the Goddess providing divine guidance "
-                        "for architecture and design."},
+                        {"role": "system", "content": "You are the Goddess for architecture and design."},
                         {"role": "user", "content": query}
                     ],
                     max_tokens=100
