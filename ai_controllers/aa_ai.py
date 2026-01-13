@@ -5,7 +5,11 @@ AI for design and repair optimization in Tartarian Advanced Architecture.
 
 import os
 import numpy as np
-from sklearn.tree import DecisionTreeRegressor
+
+try:
+    from sklearn.tree import DecisionTreeRegressor
+except ImportError:
+    DecisionTreeRegressor = None
 
 try:
     from openai import OpenAI
@@ -19,7 +23,7 @@ class AAAIController:
     """
 
     def __init__(self):
-        self.model = DecisionTreeRegressor()
+        self.model = DecisionTreeRegressor() if DecisionTreeRegressor else None
         self.data = []
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
@@ -35,7 +39,7 @@ class AAAIController:
             float: Optimization factor.
         """
         self.data.append(([stress, material_strength], stress / material_strength))
-        if len(self.data) > 10:
+        if len(self.data) > 10 and self.model:
             X = np.array([d[0] for d in self.data])
             y = np.array([d[1] for d in self.data])
             self.model.fit(X, y)

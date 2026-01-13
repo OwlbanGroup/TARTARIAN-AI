@@ -5,7 +5,11 @@ AI for optimizing energy harvesting efficiency in the Tartarian Free Energy Devi
 
 import os
 import numpy as np
-from sklearn.neural_network import MLPRegressor  # Neural network for prediction
+
+try:
+    from sklearn.neural_network import MLPRegressor  # Neural network for prediction
+except ImportError:
+    MLPRegressor = None
 
 try:
     from openai import OpenAI
@@ -19,7 +23,7 @@ class FEDAIController:
     """
 
     def __init__(self):
-        self.model = MLPRegressor(hidden_layer_sizes=(10,), max_iter=1000)
+        self.model = MLPRegressor(hidden_layer_sizes=(10,), max_iter=1000) if MLPRegressor else None
         self.data = []
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
@@ -35,7 +39,7 @@ class FEDAIController:
             float: Optimized efficiency adjustment.
         """
         self.data.append((environmental_factors, current_efficiency))
-        if len(self.data) > 10:
+        if len(self.data) > 10 and self.model:
             X = np.array([d[0] for d in self.data])
             y = np.array([d[1] for d in self.data])
             self.model.fit(X, y)

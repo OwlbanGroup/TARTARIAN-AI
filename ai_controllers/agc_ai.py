@@ -5,7 +5,11 @@ AI for flight control and stability in the Tartarian Anti-Gravity Craft.
 
 import os
 import numpy as np
-from sklearn.svm import SVR  # Support vector regression for control
+
+try:
+    from sklearn.svm import SVR  # Support vector regression for control
+except ImportError:
+    SVR = None
 
 try:
     from openai import OpenAI
@@ -19,7 +23,7 @@ class AGCAIController:
     """
 
     def __init__(self):
-        self.model = SVR(kernel='rbf')
+        self.model = SVR(kernel='rbf') if SVR else None
         self.data = []
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
 
@@ -36,7 +40,7 @@ class AGCAIController:
         """
         features = [altitude_error] + list(velocity)
         self.data.append((features, altitude_error * 0.1))  # Simulated adjustment
-        if len(self.data) > 10:
+        if len(self.data) > 10 and self.model:
             X = np.array([d[0] for d in self.data])
             y = np.array([d[1] for d in self.data])
             self.model.fit(X, y)
