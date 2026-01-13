@@ -16,7 +16,7 @@ class HealingChamber:
     def __init__(self, vibrational_frequency=7.83, ai_enabled=True):  # Schumann resonance
         self.vibrational_frequency = vibrational_frequency
         self.ai_enabled = ai_enabled
-        self.patient_data = []  # Symptoms and outcomes
+        self.patient_data = [([0.1, 0.2, 0.3], 0.5), ([0.4, 0.5, 0.6], 0.6), ([0.7, 0.8, 0.9], 0.7)]  # Initial patient data
         if self.ai_enabled:
             self.ai_model = KMeans(n_clusters=3)  # Cluster symptoms
 

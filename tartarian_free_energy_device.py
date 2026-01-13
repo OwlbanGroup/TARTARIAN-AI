@@ -19,7 +19,7 @@ class FreeEnergyDevice:
         self.efficiency = 0.8
         if self.ai_enabled:
             self.ai_model = LinearRegression()  # AI to predict and optimize efficiency
-            self.train_data = []  # Historical data for training
+            self.train_data = [(0.5, 0.9), (0.7, 0.85), (0.9, 0.8), (1.0, 0.75), (1.2, 0.7)]  # Initial historical data for training
 
     def harvest_energy(self, environmental_factor=1.0):
         """

@@ -21,7 +21,7 @@ class AntiGravityCraft:
         self.ai_enabled = ai_enabled
         if self.ai_enabled:
             self.ai_model = RandomForestRegressor(n_estimators=10)  # AI for stability
-            self.train_data = []
+            self.train_data = [(100, 0.1), (200, 0.2), (300, 0.15), (400, 0.05), (500, 0.0)]  # Initial training data
 
     def fly(self, time=10, dt=0.1, target_altitude=1000):
         """
@@ -63,7 +63,7 @@ class AntiGravityCraft:
         return np.array([0, 0, adjust])
 
     def _update_ai_data(self, altitude, adjust):
-        self.train_data.append((altitude, adjust))
+        self.train_data.append((altitude, adjust[2]))  # Store only z adjustment
         if len(self.train_data) > 50:
             self.train_data.pop(0)
 

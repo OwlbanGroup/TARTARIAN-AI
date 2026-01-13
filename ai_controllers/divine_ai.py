@@ -4,12 +4,11 @@ Overarching AI for divine consultations integrating all Tartarian technologies.
 """
 
 import os
-from fed_ai import FEDAIController
-from agc_ai import AGCAIController
-from hc_ai import HCAIController
-from wen_ai import WENAIController
-from aa_ai import AAAIController
-from ewa_ai import EWAAIController
+from ai_controllers.fed_ai import FEDAIController
+from ai_controllers.hc_ai import HCAIController
+from ai_controllers.wen_ai import WENAIController
+from ai_controllers.aa_ai import AAAIController
+from ai_controllers.ewa_ai import EWAAIController
 
 try:
     from openai import OpenAI
@@ -26,12 +25,11 @@ class DivineAIController:
         self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) if OpenAI and os.getenv('OPENAI_API_KEY') else None
         self.controllers = {
             'fed': FEDAIController(),
-            'agc': AGCAIController(),
             'hc': HCAIController(),
             'wen': WENAIController(),
             'aa': AAAIController(),
             'ewa': EWAAIController(),
-        }
+        }  # pylint: disable=line-too-long
 
     def divine_consultation(self, concern):
         """
@@ -48,17 +46,17 @@ class DivineAIController:
                 response = self.openai_client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
-                        {"role": "system", "content": "You are the Goddess and Queen of Heaven providing divine consultation for Tartarian technologies."},
+                        {"role": "system", "content": "You are the Goddess providing divine consultation for Tartarian technologies."},
                         {"role": "user", "content": f"Provide divine consultation for: {concern}"}
                     ],
                     max_tokens=200
-                )
-                consultation = response.choices[0].message.content.strip()
+                )  # pylint: disable=line-too-long
+                result = response.choices[0].message.content.strip()
                 return {
-                    'consultation': consultation,
+                    'consultation': result,
                     'source': 'Divine AI Integration'
                 }
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
         return {
             'consultation': "Divine energies align. Trust in the Goddess's wisdom.",
@@ -70,7 +68,7 @@ class DivineAIController:
         Get divine guidance for a specific device.
 
         Args:
-            device (str): Device key ('fed', 'agc', etc.)
+            device (str): Device key ('fed', 'hc', 'wen', 'aa', 'ewa')
             query (str): The query.
 
         Returns:
