@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tartarian-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tartarian-api
+  template:
+    metadata:
+      labels:
+        app: tartarian-api
+    spec:
+      containers:
+      - name: tartarian-api
+        image: tartarian-api:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_ENV
+          value: "production"
