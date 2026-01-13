@@ -5,7 +5,7 @@ Prototype: Simulation of anti-gravity flight dynamics with AI navigation.
 """
 
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor  # AI for stability prediction
+from sklearn.ensemble import RandomForestRegressor  # type: ignore # pylint: disable=import-error # AI for stability prediction
 
 
 class AntiGravityCraft:
